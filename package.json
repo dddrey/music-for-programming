@@ -9,7 +9,9 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "bluebird": "^3.5.0",
     "dom-parser": "^0.1.5",
+    "progress": "^2.0.0",
     "request": "^2.81.0"
   }
 }

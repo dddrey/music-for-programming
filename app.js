@@ -3,6 +3,9 @@
 const request = require('request')
 const DomParser = require('dom-parser')
 const parser = new DomParser()
+const Promise = require('bluebird')
+const fs = Promise.promisifyAll(require('fs'))
+const ProgressBar = require('progress')
 
 const webpage = 'http://musicforprogramming.net'
 
@@ -40,4 +43,39 @@ const getItemsList = html => {
 
 const handleError = err => {
   console.log("Whooops ! Looks like you're having an error: ", err)
+}
+
+const downloadTrack = track => {
+  let name = track.match(/\d+-[a-z_]+\.mp3/g)
+  name = name ? name[0] : track.split('-')[1]
+
+  return new Promise( (resolve, reject) => {
+    let msg, bar
+
+    const handleFileExists = (a, b) => {
+      console.log(name + ' exists, skipping download...')
+      resolve();
+    }
+
+    const handleFileDoesntExist = () => {
+      request(track)
+        .on('response', res => {
+          msg = 'Downloading ' + name + '... [:bar] :percent :etas'
+          bar = new ProgressBar(msg, {
+            incomplete: ' ',
+            width: 25,
+            renderThrottle: 500,
+            total: parseInt(res.headers['content-length'], 10)
+          })
+        })
+        .on('data', chunk => {
+          bar.tick(chunk.length)
+        })
+        .on('end', resolve)
+        .pipe(fs.createWriteStream(name))
+    }
+
+    fs.statAsync(name)
+      .then(handleFileExists, handleFileDoesntExist)
+  })
 }
