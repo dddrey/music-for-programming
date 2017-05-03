@@ -1,0 +1,11 @@
+{
+  "name": "music-for-programming",
+  "version": "1.0.0",
+  "main": "app.js",
+  "repository": "https://github.com/Andrushkins/music-for-programming.git",
+  "author": "drunz",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app.js"
+  }
+}
