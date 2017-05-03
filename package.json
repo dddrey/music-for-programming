@@ -7,5 +7,9 @@
   "license": "MIT",
   "scripts": {
     "start": "node app.js"
+  },
+  "dependencies": {
+    "dom-parser": "^0.1.5",
+    "request": "^2.81.0"
   }
 }
