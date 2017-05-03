@@ -8,6 +8,8 @@ const fs = Promise.promisifyAll(require('fs'))
 const ProgressBar = require('progress')
 
 const webpage = 'http://musicforprogramming.net'
+const url = 'https://datashat.net/music_for_programming_'
+const extension = '.mp3'
 
 request(webpage, (err, response, html) => {
   if (!err && response.statusCode == 200) {
@@ -19,6 +21,7 @@ request(webpage, (err, response, html) => {
 
 const getItemsList = html => {
   console.log("Getting tracks id's...")
+
   let parsedHTML = parser.parseFromString(html),
       tracks = parsedHTML.getElementById('episodes'),
       tracksArr = tracks.getElementsByTagName('a'), complitedUrl,
@@ -33,12 +36,11 @@ const getItemsList = html => {
     trackName = trackName.substring(trackName.indexOf(':')+2);
     trackNameForUrl = trackName.split(' ').join('_').split('+').join('and')
 
-    const url = 'https://datashat.net/music_for_programming_'
-    const extension = '.mp3'
-
     complitedUrl = url + trackNumber + '-' + trackNameForUrl.toLowerCase() + extension;
-    console.log(complitedUrl)
+    urlArr.push(complitedUrl)
   })
+  console.log('Downloading ' + urlArr.length + ' tracks...')
+  downloadTracks(urlArr)
 }
 
 const handleError = err => {
@@ -78,4 +80,12 @@ const downloadTrack = track => {
     fs.statAsync(name)
       .then(handleFileExists, handleFileDoesntExist)
   })
+}
+
+const downloadTracks = tracks => {
+  return Promise.reduce(tracks, (total, track) => {
+    return downloadTrack(track).then( () => {
+      return total + 1
+    })
+  }, 0)
 }
