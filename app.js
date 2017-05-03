@@ -13,6 +13,9 @@ const extension = '.mp3'
 
 request(webpage, (err, response, html) => {
   if (!err && response.statusCode == 200) {
+    if (!fs.existsSync('music')){
+      fs.mkdirSync('music');
+    }
     getItemsList(html)
   } else {
     handleError(err)
@@ -74,7 +77,7 @@ const downloadTrack = track => {
           bar.tick(chunk.length)
         })
         .on('end', resolve)
-        .pipe(fs.createWriteStream(name))
+        .pipe(fs.createWriteStream(`./music/${name}`))
     }
 
     fs.statAsync(name)
