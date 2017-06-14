@@ -12,7 +12,7 @@ const url = 'https://datashat.net/music_for_programming_'
 const extension = '.mp3'
 
 request(webpage, (err, response, html) => {
-  if (!err && response.statusCode == 200) {
+  if (!err && response.statusCode === 200) {
     if (!fs.existsSync('music')){
       fs.mkdirSync('music');
     }
